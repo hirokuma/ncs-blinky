@@ -3,10 +3,8 @@
 #include "drivers/led.h"
 #include "cmock_gpio.h"
 
-#undef DT_ALIAS
-#define DT_ALIAS(a)
 #undef GPIO_DT_SPEC_GET
-#define GPIO_DT_SPEC_GET(a,b) { .port = NULL, .pin = 0, .dt_flags = 0 }
+#define GPIO_DT_SPEC_GET(a,b) {}
 
 #include "drivers/led.c"
 
@@ -17,6 +15,10 @@ void setUp(void)
 void tearDown(void)
 {
 }
+
+/*********
+ * Tests
+ *********/
 
 void test_led_init_not_ready(void)
 {
@@ -42,7 +44,7 @@ void test_led_init_success(void)
     int err;
 
     __cmock_gpio_is_ready_dt_ExpectAnyArgsAndReturn(true);
-    __cmock_gpio_pin_configure_dt_ExpectAnyArgsAndReturn(0);
+    __cmock_gpio_pin_configure_dt_ExpectAndReturn(&led0, GPIO_OUTPUT_ACTIVE, 0);
     err = led_init();
     TEST_ASSERT_EQUAL(0, err);
 }
